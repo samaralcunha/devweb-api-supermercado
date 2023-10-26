@@ -1,11 +1,17 @@
 import express from "express";
+import { GetUsersController } from "./controllers/get-users/get-users";
+import { MongoGetUsersRepository } from "./repositories/get-users/mongo-get-users";
 
 const app = express();
 
 const port = 8000;
 
-app.get("/", (req, res) => {
-    res.send("hello world");
+app.get("/users", async (req, res) => {
+    const mongoGetUsersRepository = new MongoGetUsersRepository();
+    const getUsersController = new GetUsersController(mongoGetUsersRepository);
+    const { statusCode, body } = await getUsersController.handle();
+
+    res.status(statusCode).send(body);
 });
 
 app.listen(port);

@@ -4,7 +4,7 @@ export class GetUsersController implements IGetUsersController {
     constructor(private readonly getUsersRepository: IGetUsersRepository) {}
     async handle() {
         try {
-            const users = await this.getUsersRepository.getUser();
+            const users = await this.getUsersRepository.getUsers();
             return {
                 statusCode: 200,
                 body: users,
