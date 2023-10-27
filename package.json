@@ -23,5 +23,11 @@
         "prettier": "^3.0.3",
         "ts-node-dev": "^2.0.0",
         "typescript": "^5.2.2"
+    },
+    "prettier": {
+        "tabWidth": 4,
+        "trailingComma": "all",
+        "singleQuote": true,
+        "printWidth": 120
     }
 }
