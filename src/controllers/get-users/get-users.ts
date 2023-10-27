@@ -1,4 +1,4 @@
-import { IGetUsersController, IGetUsersRepository } from "./protocols";
+import { IGetUsersController, IGetUsersRepository } from './protocols';
 
 export class GetUsersController implements IGetUsersController {
     constructor(private readonly getUsersRepository: IGetUsersRepository) {}
@@ -11,8 +11,8 @@ export class GetUsersController implements IGetUsersController {
             };
         } catch (error) {
             return {
-                statusCode: 200,
-                body: "Erro ao comunicar com o banco: " + error,
+                statusCode: 500,
+                body: 'Erro ao comunicar com o banco: ' + error,
             };
         }
     }

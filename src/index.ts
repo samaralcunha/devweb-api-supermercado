@@ -1,9 +1,11 @@
 import express from 'express';
 import { CreateUserController } from './controllers/create-user/create-user';
 import { GetUsersController } from './controllers/get-users/get-users';
+import { UpdateUserController } from './controllers/update-user/update-user';
 import { MongoClient } from './database/mongo';
 import { MongoCreateUserRepository } from './repositories/create-user/mongo-create-user';
 import { MongoGetUsersRepository } from './repositories/get-users/mongo-get-users';
+import { MongoUpdateUserRepository } from './repositories/update-user/mongo-update-user';
 
 const main = async () => {
     const app = express();
@@ -27,6 +29,16 @@ const main = async () => {
             body: req.body,
         });
 
+        res.status(statusCode).send(body);
+    });
+
+    app.put('/users/:id', async (req, res) => {
+        const mongoUpdateUsersRepository = new MongoUpdateUserRepository();
+        const createUserController = new UpdateUserController(mongoUpdateUsersRepository);
+        const { statusCode, body } = await createUserController.handle({
+            body: req.body,
+            params: req.params,
+        });
         res.status(statusCode).send(body);
     });
 
