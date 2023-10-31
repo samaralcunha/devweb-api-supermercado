@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Usuários</title>
+    </head>
+    <body>
+        <ul id="lista"></ul>
+    </body>
+    <script>
+        const lista = document.getElementById("lista");
+        async function getUsers() {
+            const resposta = await fetch("http://localhost:8000/users");
+            const dados = await resposta.json();
+            dados.map((usuario) => {
+                lista.innerHTML += `<li>${usuario.firstName}</li>`;
+            });
+        }
+        // getUsers();
+    </script>
+</html>

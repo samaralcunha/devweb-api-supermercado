@@ -1,3 +1,4 @@
+import cors from 'cors';
 import express from 'express';
 import { CreateUserController } from './controllers/create-user/create-user';
 import { DeleteUserController } from './controllers/delete-user/delete-user';
@@ -12,6 +13,7 @@ import { MongoUpdateUserRepository } from './repositories/update-user/mongo-upda
 const main = async () => {
     const app = express();
     app.use(express.json());
+    app.use(cors());
     const port = 8000;
 
     await MongoClient.connect();
