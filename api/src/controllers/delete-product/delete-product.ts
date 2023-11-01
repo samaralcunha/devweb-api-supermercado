@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import { Product } from '../../models/product';
 import { HttpRequest, HttpResponse, IController } from '../protocols';
 import { IDEleteProductRepository } from './protocols';
@@ -11,6 +12,12 @@ export class DeleteProductController implements IController {
                 return {
                     statusCode: 400,
                     body: 'Parâmetro id não foi encontrado',
+                };
+            }
+            if (!ObjectId.isValid(id)) {
+                return {
+                    statusCode: 400,
+                    body: 'Id inválido',
                 };
             }
             const product = await this.deleteProductRepository.deleteProduct(id);
