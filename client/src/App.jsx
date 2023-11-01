@@ -1,146 +1,169 @@
 import React, { useState, useEffect } from 'react';
 
 function App() {
-  const [users, setUsers] = useState([]);
-  const [editingUserId, setEditingUserId] = useState(null);
-  const [editedUser, setEditedUser] = useState(null);
-  const [newUser, setNewUser] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
+  const [products, setProducts] = useState([]);
+  const [editingProductId, setEditingProductId] = useState(null);
+  const [editedProduct, setEditedProduct] = useState(null);
+  const [newProduct, setNewProduct] = useState({
+    nome: '',
+    preco: '',
+    categoria: '',
+    quantidade: '',
+    desconto: '',
   });
 
   useEffect(() => {
-    fetch('http://localhost:8000/users')
+    fetch('http://localhost:8000/products')
       .then(response => response.json())
-      .then(data => setUsers(data))
-      .catch(error => console.error('Erro ao buscar usuários:', error));
+      .then(data => setProducts(data))
+      .catch(error => console.error('Erro ao buscar produtos:', error));
   }, []);
 
-  const handleEditUser = (userId) => {
-    setEditingUserId(userId);
-    const userToEdit = users.find(user => user.id === userId);
-    setEditedUser({ ...userToEdit });
+  const handleEditProduct = (productId) => {
+    setEditingProductId(productId);
+    const productToEdit = products.find(product => product.id === productId);
+    setEditedProduct({ ...productToEdit });
   };
 
-  const handleSaveUser = () => {
-    fetch(`http://localhost:8000/users/${editingUserId}`, {
+  const handleSaveProduct = () => {
+    fetch(`http://localhost:8000/products/${editingProductId}`, {
       method: 'PUT',
-      body: JSON.stringify(editedUser),
+      body: JSON.stringify(editedProduct),
       headers: { 'Content-Type': 'application/json' },
     })
       .then(response => response.json())
       .then(data => {
-        // Atualize o estado do usuário editado
-        const updatedUsers = users.map(user => (user.id === editingUserId ? data : user));
-        setUsers(updatedUsers);
+        const updatedProducts = products.map(product => (product.id === editingProductId ? data : product));
+        setProducts(updatedProducts);
+        setEditingProductId(null);
+        setEditedProduct(null);
       })
-      .catch(error => console.error('Erro ao salvar usuário:', error));
-
-    // Limpe o estado de edição
-    setEditingUserId(null);
-    setEditedUser(null);
+      .catch(error => console.error('Erro ao salvar produto:', error));
   };
 
-  const handleCreateUser = () => {
-    fetch('http://localhost:8000/users', {
+  const handleCreateProduct = () => {
+    fetch('http://localhost:8000/products', {
       method: 'POST',
-      body: JSON.stringify(newUser),
+      body: JSON.stringify(newProduct),
       headers: { 'Content-Type': 'application/json' },
     })
       .then(response => response.json())
       .then(data => {
-        // Adicione o novo usuário à lista de usuários no estado
-        setUsers([...users, data]);
-        // Limpe o estado do novo usuário
-        setNewUser({
-          firstName: '',
-          lastName: '',
-          email: '',
-          password: '',
+        setProducts([...products, data]);
+        setNewProduct({
+          nome: '',
+          preco: '',
+          categoria: '',
+          quantidade: '',
+          desconto: '',
         });
       })
-      .catch(error => console.error('Erro ao criar usuário:', error));
+      .catch(error => console.error('Erro ao criar produto:', error));
+  };
+
+  const handleDeleteProduct = (productId) => {
+    fetch(`http://localhost:8000/products/${productId}`, {
+      method: 'DELETE',
+    })
+      .then(() => {
+        const updatedProducts = products.filter(product => product.id !== productId);
+        setProducts(updatedProducts);
+      })
+      .catch(error => console.error('Erro ao excluir produto:', error));
   };
 
   return (
     <div>
-      <h1>Lista de Usuários</h1>
+      <h1>Lista de Produtos</h1>
       <ul>
-        {users.map(user => (
-          <li key={user.id}>
-            {editingUserId === user.id ? (
+        {products.map(product => (
+          <li key={product.id}>
+            {editingProductId === product.id ? (
               <div>
                 <input
                   type="text"
-                  value={editedUser.firstName}
-                  onChange={e => setEditedUser({ ...editedUser, firstName: e.target.value })}
+                  value={editedProduct.nome}
+                  onChange={e => setEditedProduct({ ...editedProduct, nome: e.target.value })}
                 />
                 <input
                   type="text"
-                  value={editedUser.lastName}
-                  onChange={e => setEditedUser({ ...editedUser, lastName: e.target.value })}
+                  value={editedProduct.preco}
+                  onChange={e => setEditedProduct({ ...editedProduct, preco: e.target.value })}
                 />
                 <input
-                  type="email"
-                  value={editedUser.email}
-                  onChange={e => setEditedUser({ ...editedUser, email: e.target.value })}
+                  type="text"
+                  value={editedProduct.categoria}
+                  onChange={e => setEditedProduct({ ...editedProduct, categoria: e.target.value })}
                 />
                 <input
-                  type="password"
-                  value={editedUser.password}
-                  onChange={e => setEditedUser({ ...editedUser, password: e.target.value })}
+                  type="number"
+                  value={editedProduct.quantidade}
+                  onChange={e => setEditedProduct({ ...editedProduct, quantidade: e.target.value })}
                 />
-                <button onClick={() => handleSaveUser()}>Salvar</button>
+                <input
+                  type="number"
+                  value={editedProduct.desconto}
+                  onChange={e => setEditedProduct({ ...editedProduct, desconto: e.target.value })}
+                />
+                <button onClick={() => handleSaveProduct()}>Salvar</button>
               </div>
             ) : (
               <>
                 <div>
-                  <strong>Nome:</strong> {user.firstName}
+                  <strong>Nome:</strong> {product.nome}
                 </div>
                 <div>
-                  <strong>Sobrenome:</strong> {user.lastName}
+                  <strong>Preço:</strong> {product.preco}
                 </div>
                 <div>
-                  <strong>Email:</strong> {user.email}
+                  <strong>Categoria:</strong> {product.categoria}
                 </div>
                 <div>
-                  <strong>Senha:</strong> {user.password}
+                  <strong>Quantidade:</strong> {product.quantidade}
                 </div>
-                <button onClick={() => handleEditUser(user.id)}>Editar</button>
+                <div>
+                  <strong>Desconto:</strong> {product.desconto}
+                </div>
+                <button onClick={() => handleEditProduct(product.id)}>Editar</button>
+                <button onClick={() => handleDeleteProduct(product.id)}>Excluir</button>
               </>
             )}
           </li>
         ))}
       </ul>
       <div>
-        <h2>Novo Usuário</h2>
+        <h2>Novo Produto</h2>
         <input
           type="text"
-          placeholder="Primeiro Nome"
-          value={newUser.firstName}
-          onChange={e => setNewUser({ ...newUser, firstName: e.target.value })}
+          placeholder="Nome do produto:"
+          value={newProduct.nome}
+          onChange={e => setNewProduct({ ...newProduct, nome: e.target.value })}
         />
         <input
           type="text"
-          placeholder="Sobrenome"
-          value={newUser.lastName}
-          onChange={e => setNewUser({ ...newUser, lastName: e.target.value })}
+          placeholder="Preço:"
+          value={newProduct.preco}
+          onChange={e => setNewProduct({ ...newProduct, preco: e.target.value })}
         />
         <input
-          type="email"
-          placeholder="Email"
-          value={newUser.email}
-          onChange={e => setNewUser({ ...newUser, email: e.target.value })}
+          type="text"
+          placeholder="Categoria:"
+          value={newProduct.categoria}
+          onChange={e => setNewProduct({ ...newProduct, categoria: e.target.value })}
         />
         <input
-          type="password"
-          placeholder="Senha"
-          value={newUser.password}
-          onChange={e => setNewUser({ ...newUser, password: e.target.value })}
+          type="text"
+          placeholder="Quantidade:"
+          value={newProduct.quantidade}
+          onChange={e => setNewProduct({ ...newProduct, quantidade: e.target.value })}
         />
-        <button onClick={() => handleCreateUser()}>Criar Usuário</button>
+        <input
+          type="text"
+          placeholder="Desconto:"
+          value={newProduct.desconto}
+          onChange={e => setNewProduct({ ...newProduct, desconto: e.target.value })}
+        />
+        <button onClick={() => handleCreateProduct()}>Adicionar Produto</button>
       </div>
     </div>
   );
