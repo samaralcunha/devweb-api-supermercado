@@ -7,7 +7,7 @@ export const MongoClient = {
     async connect(): Promise<void> {
         const url = process.env.DATABASE_URI;
         const client = new Mongo(url!);
-        const db = client.db("users-db");
+        const db = client.db("products");
         this.client = client;
         this.db = db;
 
