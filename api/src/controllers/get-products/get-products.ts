@@ -1,14 +1,14 @@
 import { IController } from '../protocols';
-import { IGetUsersRepository } from './protocols';
+import { IGetProductRepository } from './protocols';
 
-export class GetUsersController implements IController {
-    constructor(private readonly getUsersRepository: IGetUsersRepository) {}
+export class GetProductController implements IController {
+    constructor(private readonly getProductReposiory: IGetProductRepository) {}
     async handle() {
         try {
-            const users = await this.getUsersRepository.getUsers();
+            const products = await this.getProductReposiory.getProducts();
             return {
                 statusCode: 200,
-                body: users,
+                body: products,
             };
         } catch (error) {
             return {

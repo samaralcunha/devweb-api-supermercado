@@ -1,14 +1,14 @@
 import cors from 'cors';
 import express from 'express';
-import { CreateUserController } from './controllers/create-user/create-user';
-import { DeleteUserController } from './controllers/delete-user/delete-user';
-import { GetUsersController } from './controllers/get-users/get-users';
-import { UpdateUserController } from './controllers/update-user/update-user';
+import { CreateProductController } from './controllers/create-product/create-product';
+import { GetProductController } from './controllers/get-products/get-products';
 import { MongoClient } from './database/mongo';
-import { MongoCreateUserRepository } from './repositories/create-user/mongo-create-user';
-import { MongoDeleteUserRepository } from './repositories/delete-user/mongo-delete-user';
-import { MongoGetUsersRepository } from './repositories/get-users/mongo-get-users';
-import { MongoUpdateUserRepository } from './repositories/update-user/mongo-update-user';
+import { GetProductRepository } from './repositories/get-products';
+import { CreateProductRepository } from './repositories/create-product';
+import { UpdateProductsRepository } from './repositories/update-product';
+import { DeleteProductRepository } from './repositories/delete-product';
+import { UpdateProductController } from './controllers/update-product/update-product';
+import { DeleteProductController } from './controllers/delete-product/delete-product';
 
 const main = async () => {
     const app = express();
@@ -18,38 +18,36 @@ const main = async () => {
 
     await MongoClient.connect();
 
-    app.get('/users', async (req, res) => {
-        const mongoGetUsersRepository = new MongoGetUsersRepository();
-        const getUsersController = new GetUsersController(mongoGetUsersRepository);
-        const { statusCode, body } = await getUsersController.handle();
-
+    app.get('/products', async (req, res) => {
+        const getProductRepository = new GetProductRepository();
+        const getProductController = new GetProductController(getProductRepository);
+        const { statusCode, body } = await getProductController.handle();
         res.status(statusCode).send(body);
     });
 
-    app.post('/users', async (req, res) => {
-        const mongoCreateUsersRepository = new MongoCreateUserRepository();
-        const createUserController = new CreateUserController(mongoCreateUsersRepository);
-        const { statusCode, body } = await createUserController.handle({
+    app.post('/products', async (req, res) => {
+        const createProductRepository = new CreateProductRepository();
+        const createProductController = new CreateProductController(createProductRepository);
+        const { statusCode, body } = await createProductController.handle({
             body: req.body,
         });
-
         res.status(statusCode).send(body);
     });
 
-    app.put('/users/:id', async (req, res) => {
-        const mongoUpdateUserRepository = new MongoUpdateUserRepository();
-        const updateUserController = new UpdateUserController(mongoUpdateUserRepository);
-        const { statusCode, body } = await updateUserController.handle({
+    app.put('/products/:id', async (req, res) => {
+        const updateProductRepository = new UpdateProductsRepository();
+        const updateProductController = new UpdateProductController(updateProductRepository);
+        const { statusCode, body } = await updateProductController.handle({
             body: req.body,
             params: req.params,
         });
         res.status(statusCode).send(body);
     });
 
-    app.delete('/users/:id', async (req, res) => {
-        const mongoDeleteUserRepository = new MongoDeleteUserRepository();
-        const deleteUserController = new DeleteUserController(mongoDeleteUserRepository);
-        const { statusCode, body } = await deleteUserController.handle({
+    app.delete('/products/:id', async (req, res) => {
+        const deleteProductRepository = new DeleteProductRepository();
+        const deleteProductController = new DeleteProductController(deleteProductRepository);
+        const { statusCode, body } = await deleteProductController.handle({
             params: req.params,
         });
         res.status(statusCode).send(body);
@@ -57,5 +55,4 @@ const main = async () => {
 
     app.listen(port);
 };
-
 main();

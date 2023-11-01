@@ -1,41 +1,36 @@
-import { User } from '../../models/user';
+import { Product } from '../../models/product';
 import { HttpRequest, HttpResponse, IController } from '../protocols';
-import { CreateUserParams, ICreateUserRepository } from './protocols';
+import { CreateProductParams, ICreateProductRepository } from './protocols';
 
-export class CreateUserController implements IController {
-    constructor(private readonly createUserRepository: ICreateUserRepository) {}
-    async handle(httpRequest: HttpRequest<CreateUserParams>): Promise<HttpResponse<User>> {
+export class CreateProductController implements IController {
+    constructor(private readonly createProductRepository: ICreateProductRepository) {}
+    async handle(httpRequest: HttpRequest<CreateProductParams>): Promise<HttpResponse<Product>> {
         try {
-            // validar se body existe
             if (!httpRequest.body) {
                 return {
                     statusCode: 400,
                     body: 'Body da requisição não foi encontrado',
                 };
             }
-
-            // validar campos
-            const requiredFiels = ['firstName', 'lastName', 'email', 'password'];
+            const requiredFiels = ['nome', 'preco', 'categoria', 'quantidade', 'desconto'];
             for (const field of requiredFiels) {
-                if (!httpRequest.body[field as keyof CreateUserParams]?.length) {
+                if (!httpRequest.body[field as keyof CreateProductParams].toString().length) {
                     return {
                         statusCode: 400,
                         body: `Campo ${field} não foi informado`,
                     };
                 }
             }
-
             const { body } = httpRequest;
-            const user = await this.createUserRepository.createUser(body);
-
+            const product = await this.createProductRepository.createProduct(body);
             return {
                 statusCode: 201,
-                body: user,
+                body: product,
             };
         } catch (error) {
             return {
                 statusCode: 500,
-                body: 'Erro no CreateUserController',
+                body: 'Erro no CreateProductController',
             };
         }
     }
